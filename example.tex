@@ -5,7 +5,8 @@
 
 \begin{document}
 
-\begin{tikzpicture}[timespan={}]
+\begin{tikzpicture}[timespan={},timeline height=2em,timeline offset=0.1em,
+  timeline opacity=0.6]
 % timespan={Day} -> now we have days as reference
 % timespan={}    -> no label is displayed for the timespan
 % default timespan is 'Week'
@@ -16,10 +17,10 @@
 
 % put here the phases
 \begin{phases}
-\initialphase{involvement degree=1.75cm,phase color=black}
+  \initialphase{involvement degree=1.75cm,phase color=black}
 \phase{between week=1 and 2 in 0.1,involvement degree=2.25cm}
 \phase{between week=1 and 2 in 0.5,involvement degree=3cm}
-\phase{between week=1 and 2 in 0.9,involvement degree=2.125cm}
+\phase{between week=1 and 2 in 0.9,involvement degree=2.125cm, phase color=green!80!orange}
 \phase{between week=3 and 4 in 0.7,phase color=blue!80!cyan}
 \end{phases}
 
