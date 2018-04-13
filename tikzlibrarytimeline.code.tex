@@ -1,12 +1,12 @@
 % * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 % COPYRIGHT 2014 - Claudio Fiandrino
 % Released under the LaTeX Project Public License v1.3c or later
-% 
+%
 % email: <claudio dot fiandrino at gmail dot com>
 %
 % Timeline TikZ library version 0.3a - 19/07/2014
 
-\usetikzlibrary{backgrounds,calc}
+\usetikzlibrary{backgrounds,calc,shapes}
 
 \pgfkeys{/tikz/.cd,
   timespan/.store in=\timespan,
@@ -17,6 +17,8 @@
   timeline height=1,
   timeline offset/.store in=\timelineoffset,
   timeline offset=0.15,
+  timeline opacity/.store in=\timelineopacity,
+  timeline opacity=0.8,
   initial week/.store in=\initialweek,
   initial week=1,
   end week/.store in=\endweek,
@@ -46,14 +48,22 @@
   involvement degree/.store in=\involvdegree,
   involvement degree=2cm,
   phase color/.store in=\phasecol,
-  phase color=red!50!orange,
-  phase appearance/.style={
-    circle,
-    opacity=0.3,
-    minimum size=\involvdegree,
-    fill=\phasecol
+  phase color/.default=red!50!orange,
+  phase color, %Actually set the default
+  phase eccentricity/.store in=\phaseeccentricity,
+  phase eccentricity/.default=0.9,
+  phase eccentricity, %Actually set the default
+  phase appearance/.style={%
+    shape=ellipse,
+    draw opacity=0.7,
+    minimum width=\involvdegree,
+    minimum height=\phaseeccentricity*\involvdegree,%\timelineheight + 0.6*\involvdegree,
+    fill=\phasecol,
+    draw=\phasecol,
+    very thin
   },
 }
+
 % settings to customize aspect of timeline
 \newif\ifcustominterval
 \pgfkeys{/tikz/timeline/.cd,
@@ -66,7 +76,9 @@
   at/.store in=\msstartpoint,
   at=phase-1.north,
   circle radius/.store in=\milestonecircleradius,
-  circle radius=0.1cm,
+  circle radius=0.6mm,
+  circle color/.store in=\milestonecirclecolor,
+  circle color=black,
   direction/.store in=\msdirection,
   direction=90:2cm,
   text/.store in=\mstext,
@@ -76,12 +88,12 @@
 
 \newcommand{\reftimespan}{\MakeLowerCase{\timespan}}
 
-\newcommand{\timeline}[2][]{
+\newcommand{\timeline}[2][]{%
   \pgfkeys{/tikz/timeline/.cd,#1}
-  \draw[fill,opacity=0.8] (0,0) rectangle (\timelinewidth,\timelineheight);
+  \draw[fill,opacity=\timelineopacity] (0,0) rectangle (\timelinewidth,\timelineheight);
   \shade[top color=black, bottom color=white,middle color=black!20]
     (0,0) rectangle (\timelinewidth,-\timelineoffset);
-  \shade[top color=white, bottom color=black,middle color=black!20]  
+  \shade[top color=white, bottom color=black,middle color=black!20]
     (0,\timelineheight) rectangle (\timelinewidth,\timelineheight+\timelineoffset);
 
   \ifcustominterval%
@@ -89,43 +101,54 @@
   \else%
     \foreach \smitem [count=\xi] in {1,...,#2}  {\global\let\maxsmitem\xi}%
   \fi%
-  
+
   \pgfmathsetmacro\position{\timelinewidth/(\maxsmitem+1)}
-  \node at (0,0.5\timelineheight)(\timespan-0){\phantom{Week 0}};
- 
+  \node at (0,0.5*\timelineheight)(\timespan-0){\phantom{Week 0}};
+
   \ifcustominterval%
     \foreach \x[count=\xi] in {#2}{%
-      \node[text=white,text depth=0pt]at +(\xi*\position,0.5\timelineheight) (\timespan-\xi) {\timespan\ \x};%
+      \node[text=white,text depth=0pt] at +(\xi*\position,0.5*\timelineheight) (\timespan-\xi) {\timespan\ \x};%
     }%
   \else%
     \foreach \x[count=\xi] in {1,...,#2}{%
-      \node[text=white, text depth=0pt]at +(\xi*\position,0.5\timelineheight) (\timespan-\xi) {\timespan\ \x};%
+      \node[text=white, text depth=0pt] at +(\xi*\position,0.5*\timelineheight) (\timespan-\xi) {\timespan\ \x};%
     }%
-  \fi%  
+  \fi%
 }
 
 \newcounter{involv}
 \setcounter{involv}{0}
 
-\newcommand{\phase}[1]{
+\newcommand{\phase}[1]{%
 \stepcounter{involv}
-\node[phase appearance,#1] 
+%\show\phasecol
+\pgfkeys{/tikz/.cd,
+         phase color,
+         #1}
+%\show\phasecol
+
+\pgfmathsetmacro\opacity{max(0.8-\involvdegree/(\timelinewidth*28.4),0.05)} % Convert in pt
+\node[phase appearance, opacity=\opacity, draw opacity=0.7]
  (phase-\theinvolv)
  at ($(\timespan-\initialweek)!\timepoint!(\timespan-\endweek)$){};
 }
 
-\newcommand{\initialphase}[1]{
-\node[phase appearance,#1,anchor=west,between week=0 and 1 in 0,] 
+\newcommand{\initialphase}[1]{%
+\setcounter{involv}{0}
+%\show\phasecol
+\pgfkeys{/tikz/.cd,#1}
+%\show\phasecol
+\pgfmathsetmacro\opacity{max(0.8-\involvdegree/(\timelinewidth*28.4),0.05)} % Convert in pt
+\node[phase appearance,opacity=\opacity,anchor=west,between week=0 and 1 in 0,]
  (phase-\theinvolv)
  at ($(\timespan-0)!0!(\timespan-1)$){};
-\setcounter{involv}{0} 
 }
 
 \newenvironment{phases}{\begin{pgfonlayer}{background}}{\end{pgfonlayer}}
 
-\newcommand{\addmilestone}[1]{
+\newcommand{\addmilestone}[1]{%
 \pgfkeys{/tikz/milestone/.cd,#1}
-\draw[double,fill] (\msstartpoint) circle [radius=\milestonecircleradius];
+\draw[double,fill,draw=\milestonecirclecolor] (\msstartpoint) circle [radius=\milestonecircleradius];
 \draw(\msstartpoint)--++(\msdirection)node[/tikz/milestone/text options]{\mstext};
 }
 
