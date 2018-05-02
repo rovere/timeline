@@ -32,4 +32,33 @@
 \addmilestone{at=phase-2.250,direction=240:1.5cm,text={Need Agreement},text options={below}}
 \end{tikzpicture}
 
+\begin{tikzpicture}[timespan={}, font=\small, timeline height=1em, timeline width=10, timeline offset=0.2em]
+  % timespan={Day} -> now we have days as reference
+  % timespan={}    -> no label is displayed for the timespan
+  % default timespan is 'Week'
+  %    \drawgrid{11}{7} % Use this to compute proper lengths on the page!!!! Units are in CM, line-separation in mm
+  \timeline[custom interval=true]{Apr, May, Jun, Jul, Sep, Oct, Nov, Jan, Feb, Mar}
+  % \timeline[custom interval=true]{3,...,9} -> i.e., from Day 3 to Day 9
+  % \timeline{8} -> i.e., from Week 1 to Week 8
+  % put here the phases
+  \begin{phases}
+    \initialphase{involvement degree=1.75cm,phase color=black}
+    \phase{between month=2 and 3 in 0,phase color=green!50, involvement degree=2.25cm}
+    \phase{between month=4 and 6 in 0,involvement degree=3cm}
+    \phase{between month=5 and 5 in 0,involvement degree=2.125cm}
+    \phase{between month=7 and 9 in 0,phase color=blue!80!cyan}
+  \end{phases}
+  % put here the milestones
+  \addmilestone{at=phase-0.90,direction=90:1cm,text={Phase-0},text options={above}}
+  \addmilestone{at=phase-0.270,direction=270:1cm,text={Phase-0},text options={below}}
+  \addmilestone{at=phase-1.90,direction=90:1.2cm,text={Phase-1},text options={above}, circle color=green!50}
+  \addmilestone{at=phase-1.270,direction=270:1.2cm,text={Phase-1},text options={below}, circle color=green!50}
+  \addmilestone{at=phase-2.90,direction=90:1cm,text={Phase-2},text options={above}}
+  \addmilestone{at=phase-2.270,direction=270:1cm,text={Phase-2},text options={below}}
+  \addmilestone{at=phase-3.90,direction=90:1cm,text={Phase-3},text options={above}}
+  \addmilestone{at=phase-3.270,direction=270:1cm,text={Phase-3},text options={below}}
+  \addmilestone{at=phase-4.90,direction=70:1.5cm,text={Research},text options={above},circle color=blue!80!cyan}
+  \addmilestone{at=phase-4.270,direction=290:2.5cm,text={Need Agreement},text options={below}, circle color=blue!80!cyan}
+\end{tikzpicture}
+
 \end{document}
