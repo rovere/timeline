@@ -78,7 +78,8 @@
   circle radius/.store in=\milestonecircleradius,
   circle radius=0.6mm,
   circle color/.store in=\milestonecirclecolor,
-  circle color=black,
+  circle color/.default=black,
+  circle color,
   direction/.store in=\msdirection,
   direction=90:2cm,
   text/.store in=\mstext,
@@ -147,7 +148,7 @@
 \newenvironment{phases}{\begin{pgfonlayer}{background}}{\end{pgfonlayer}}
 
 \newcommand{\addmilestone}[1]{%
-\pgfkeys{/tikz/milestone/.cd,#1}
+\pgfkeys{/tikz/milestone/.cd,circle color,#1}
 \draw[double,fill,draw=\milestonecirclecolor] (\msstartpoint) circle [radius=\milestonecircleradius];
 \draw(\msstartpoint)--++(\msdirection)node[/tikz/milestone/text options]{\mstext};
 }
